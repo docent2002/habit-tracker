@@ -1,0 +1,829 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><title>Platja d'Aro Kaufkompass</title>
+<style>
+  :root {
+    --ground: #F6F5F1;
+    --surface: #FFFFFF;
+    --ink: #1B2A32;
+    --muted: #5B6D75;
+    --hair: #E3E1D9;
+    --azure: #0E6E8E;
+    --azure-deep: #0A5570;
+    --azure-tint: #E7F1F5;
+    --sun: #C08A2D;
+    --sun-tint: #F8F0DF;
+    --ok: #2E7D5B;
+    --warn: #A96800;
+    --crit: #B3423A;
+    --crit-tint: #F7ECEA;
+    --shadow: 0 1px 3px rgba(27, 42, 50, .08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0E161B;
+      --surface: #16222A;
+      --ink: #E7EDEF;
+      --muted: #8FA3AC;
+      --hair: #24333C;
+      --azure: #52B6D6;
+      --azure-deep: #7CCBE4;
+      --azure-tint: #12303C;
+      --sun: #E3B863;
+      --sun-tint: #2E2617;
+      --ok: #58B58B;
+      --warn: #D69A3D;
+      --crit: #E07A70;
+      --crit-tint: #34201E;
+      --shadow: 0 1px 3px rgba(0, 0, 0, .35);
+    }
+  }
+  :root[data-theme="light"] {
+    --ground: #F6F5F1; --surface: #FFFFFF; --ink: #1B2A32; --muted: #5B6D75;
+    --hair: #E3E1D9; --azure: #0E6E8E; --azure-deep: #0A5570; --azure-tint: #E7F1F5;
+    --sun: #C08A2D; --sun-tint: #F8F0DF; --ok: #2E7D5B; --warn: #A96800;
+    --crit: #B3423A; --crit-tint: #F7ECEA; --shadow: 0 1px 3px rgba(27,42,50,.08);
+  }
+  :root[data-theme="dark"] {
+    --ground: #0E161B; --surface: #16222A; --ink: #E7EDEF; --muted: #8FA3AC;
+    --hair: #24333C; --azure: #52B6D6; --azure-deep: #7CCBE4; --azure-tint: #12303C;
+    --sun: #E3B863; --sun-tint: #2E2617; --ok: #58B58B; --warn: #D69A3D;
+    --crit: #E07A70; --crit-tint: #34201E; --shadow: 0 1px 3px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: Seravek, 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  h1, h2, h3, .display {
+    font-family: Optima, Candara, 'Gill Sans', 'Segoe UI', system-ui, sans-serif;
+    text-wrap: balance;
+    margin: 0;
+  }
+  .num, td.num, input, .result-value { font-variant-numeric: tabular-nums; }
+  a { color: var(--azure); }
+  button { font: inherit; cursor: pointer; }
+  :is(button, a, input, select):focus-visible { outline: 2px solid var(--azure); outline-offset: 2px; }
+
+  /* ---------- Header ---------- */
+  header.app {
+    position: sticky; top: 0; z-index: 30;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+  .masthead {
+    max-width: 1060px; margin: 0 auto; padding: 14px 20px 10px;
+    display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
+  }
+  .masthead h1 { font-size: 21px; font-weight: 700; letter-spacing: .01em; }
+  .masthead .sub {
+    color: var(--muted); font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase;
+  }
+  .horizon {
+    height: 5px;
+    background: linear-gradient(90deg, #7CC4DC 0%, #3D9AB8 34%, var(--azure) 60%, #0A5570 100%);
+  }
+  nav.tabs {
+    max-width: 1060px; margin: 0 auto; padding: 0 12px;
+    display: flex; gap: 2px; overflow-x: auto;
+  }
+  nav.tabs button {
+    background: none; border: none; border-bottom: 3px solid transparent;
+    padding: 9px 13px 7px; color: var(--muted); font-size: 14px; white-space: nowrap;
+    font-family: Optima, Candara, 'Gill Sans', 'Segoe UI', sans-serif; font-weight: 600;
+  }
+  nav.tabs button[aria-selected="true"] { color: var(--azure-deep); border-bottom-color: var(--azure); }
+  nav.tabs button:hover { color: var(--ink); }
+
+  main { max-width: 1060px; margin: 0 auto; padding: 22px 20px 70px; }
+  section.tabpane { display: none; }
+  section.tabpane.active { display: block; animation: fadein .25s ease; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    section.tabpane.active { animation: none; }
+  }
+
+  .lede { max-width: 62ch; color: var(--muted); margin: 4px 0 18px; }
+  h2 { font-size: 18px; margin-bottom: 4px; }
+  h3 { font-size: 15px; }
+
+  /* ---------- Cards & grids ---------- */
+  .cardgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--hair); border-radius: 6px;
+    padding: 16px; display: flex; flex-direction: column; gap: 8px; box-shadow: var(--shadow);
+  }
+  .card.reco { border-color: var(--sun); border-width: 1.5px; }
+  .eyebrow {
+    font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .eyebrow .flag {
+    color: var(--sun); border: 1px solid var(--sun); border-radius: 3px;
+    padding: 0 6px; background: var(--sun-tint); letter-spacing: .06em;
+  }
+  .card h3 { line-height: 1.3; }
+  .price { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .price small { font-size: 12px; font-weight: 400; color: var(--muted); }
+  .specs { color: var(--muted); font-size: 13px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .chip {
+    font-size: 11.5px; padding: 2px 8px; border-radius: 999px;
+    background: var(--azure-tint); color: var(--azure-deep); border: 1px solid transparent;
+  }
+  .chip.off { background: transparent; color: var(--muted); border-color: var(--hair); text-decoration: line-through; }
+  .chip.lic { background: var(--sun-tint); color: var(--sun); font-weight: 600; }
+
+  /* Wellen-Anzeige: Kriterienerfüllung */
+  .fit { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+  .waves { display: inline-flex; gap: 3px; }
+  .waves i {
+    width: 16px; height: 7px; border-radius: 999px 999px 4px 4px;
+    background: var(--hair); display: inline-block;
+  }
+  .waves i.on { background: var(--azure); }
+
+  .cardfoot { margin-top: auto; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .btn {
+    border: 1px solid var(--azure); color: var(--azure-deep); background: none;
+    border-radius: 5px; padding: 5px 11px; font-size: 13px; font-weight: 600; text-decoration: none;
+  }
+  .btn.primary { background: var(--azure); color: #fff; }
+  :root[data-theme="dark"] .btn.primary, .dark-btn-fix { color: #fff; }
+  .btn:hover { filter: brightness(1.08); }
+
+  /* ---------- Filter bar ---------- */
+  .filterbar {
+    display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: center;
+    background: var(--surface); border: 1px solid var(--hair); border-radius: 6px;
+    padding: 12px 16px; margin-bottom: 16px; font-size: 13.5px;
+  }
+  .filterbar label { display: flex; align-items: center; gap: 6px; }
+  .filterbar .grow { flex: 1 1 180px; }
+  .filterbar input[type="range"] { width: 100%; accent-color: var(--azure); }
+  .filterbar input[type="checkbox"] { accent-color: var(--azure); }
+  .filterbar select {
+    background: var(--surface); color: var(--ink); border: 1px solid var(--hair);
+    border-radius: 4px; padding: 3px 6px;
+  }
+  .count { color: var(--muted); font-size: 12.5px; }
+
+  /* ---------- Rechner ---------- */
+  .calc { display: grid; grid-template-columns: minmax(280px, 380px) 1fr; gap: 16px; align-items: start; }
+  @media (max-width: 760px) { .calc { grid-template-columns: 1fr; } }
+  .panel {
+    background: var(--surface); border: 1px solid var(--hair); border-radius: 6px;
+    padding: 16px 18px; box-shadow: var(--shadow);
+  }
+  .panel h3 { margin-bottom: 10px; }
+  .field { margin-bottom: 11px; }
+  .field label { display: block; font-size: 12.5px; color: var(--muted); margin-bottom: 3px; }
+  .field .inline { display: flex; gap: 8px; align-items: center; }
+  .field input[type="number"] {
+    width: 100%; padding: 6px 9px; border: 1px solid var(--hair); border-radius: 5px;
+    background: var(--ground); color: var(--ink); font-size: 14.5px;
+  }
+  .field input[type="range"] { width: 100%; accent-color: var(--azure); }
+  .field .rangeval { font-weight: 700; min-width: 52px; text-align: right; }
+
+  table.results { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table.results td { padding: 7px 4px; border-bottom: 1px solid var(--hair); vertical-align: top; }
+  table.results tr:last-child td { border-bottom: none; }
+  table.results td.num { text-align: right; font-weight: 600; white-space: nowrap; }
+  table.results tr.total td { font-weight: 700; border-top: 2px solid var(--ink); font-size: 15px; }
+  table.results tr.sep td { border-bottom: 2px solid var(--hair); }
+  .hint { font-size: 12.5px; color: var(--muted); margin-top: 10px; max-width: 60ch; }
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+  .badge.ok { background: color-mix(in srgb, var(--ok) 14%, transparent); color: var(--ok); }
+  .badge.crit { background: var(--crit-tint); color: var(--crit); }
+
+  .comparegrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 700px) { .comparegrid { grid-template-columns: 1fr; } }
+  .winner { border-color: var(--ok); border-width: 1.5px; }
+  .winnertag { color: var(--ok); font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+
+  /* ---------- Hinweise ---------- */
+  .notice {
+    border-left: 4px solid var(--crit); background: var(--crit-tint);
+    border-radius: 0 6px 6px 0; padding: 12px 16px; margin: 0 0 18px; font-size: 14px;
+  }
+  .notice strong { color: var(--crit); }
+  .notice.gold { border-left-color: var(--sun); background: var(--sun-tint); }
+  .notice.gold strong { color: var(--sun); }
+
+  /* ---------- Checkliste ---------- */
+  .progresswrap { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .progressbar { flex: 1; height: 9px; border-radius: 999px; background: var(--hair); overflow: hidden; }
+  .progressbar > div { height: 100%; background: var(--azure); border-radius: 999px; transition: width .3s ease; }
+  .checkgroup { margin-bottom: 6px; }
+  .checkgroup summary {
+    cursor: pointer; font-weight: 700; padding: 10px 4px; font-size: 15px;
+    font-family: Optima, Candara, 'Gill Sans', 'Segoe UI', sans-serif;
+    display: flex; align-items: baseline; gap: 10px;
+  }
+  .checkgroup summary .gcount { font-weight: 400; color: var(--muted); font-size: 12.5px; }
+  .checkitem { display: flex; gap: 10px; padding: 7px 4px 7px 10px; border-top: 1px solid var(--hair); align-items: flex-start; }
+  .checkitem input { accent-color: var(--azure); margin-top: 4px; flex-shrink: 0; }
+  .checkitem label { cursor: pointer; }
+  .checkitem input:checked + label { color: var(--muted); text-decoration: line-through; }
+
+  /* ---------- Fahrplan ---------- */
+  .phase { display: grid; grid-template-columns: 86px 1fr; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--hair); }
+  .phase:last-child { border-bottom: none; }
+  .phase .when {
+    font-family: Optima, Candara, 'Gill Sans', sans-serif; font-weight: 700;
+    color: var(--azure-deep); font-size: 13px; padding-top: 2px;
+  }
+  .phase h3 { margin-bottom: 3px; }
+  .phase p { margin: 0; color: var(--muted); font-size: 13.5px; max-width: 68ch; }
+
+  .statrow { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 18px; }
+  .stat { background: var(--surface); border: 1px solid var(--hair); border-radius: 6px; padding: 12px 14px; }
+  .stat .k { font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
+  .stat .v { font-size: 19px; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 2px; }
+  .stat .v small { font-size: 12px; color: var(--muted); font-weight: 400; }
+
+  footer.app {
+    max-width: 1060px; margin: 0 auto; padding: 18px 20px 30px;
+    color: var(--muted); font-size: 12px; border-top: 1px solid var(--hair);
+  }
+</style>
+
+<header class="app">
+  <div class="masthead">
+    <h1>Platja d&rsquo;Aro &middot; Kaufkompass</h1>
+    <span class="sub">Ferienwohnung mit Airbnb-Lizenz &middot; Stand 6.&nbsp;Juli 2026</span>
+  </div>
+  <nav class="tabs" role="tablist" id="tabs">
+    <button role="tab" data-tab="uebersicht" aria-selected="true">&Uuml;bersicht</button>
+    <button role="tab" data-tab="objekte" aria-selected="false">Objekte</button>
+    <button role="tab" data-tab="finanzierung" aria-selected="false">Finanzierung</button>
+    <button role="tab" data-tab="rendite" aria-selected="false">Rendite</button>
+    <button role="tab" data-tab="checkliste" aria-selected="false">Checkliste</button>
+    <button role="tab" data-tab="fahrplan" aria-selected="false">Fahrplan</button>
+  </nav>
+  <div class="horizon" aria-hidden="true"></div>
+</header>
+
+<main>
+
+  <!-- ============ ÜBERSICHT ============ -->
+  <section class="tabpane active" id="pane-uebersicht">
+    <h2>Die Lage in einem Blick</h2>
+    <p class="lede">Castell-Platja d&rsquo;Aro vergibt keine neuen touristischen Lizenzen (Moratorium). F&uuml;r legale Airbnb-Vermietung z&auml;hlt nur eines: eine Wohnung kaufen, deren Lizenz bereits existiert und mit&uuml;bertragen wird.</p>
+
+    <div class="statrow">
+      <div class="stat"><div class="k">Objekte mit Lizenz</div><div class="v">12 <small>gefunden</small></div></div>
+      <div class="stat"><div class="k">Preisspanne</div><div class="v">149&ndash;630&nbsp;T€</div></div>
+      <div class="stat"><div class="k">Budget</div><div class="v">0,5&ndash;1,0&nbsp;Mio&nbsp;€ <small>inkl. NK</small></div></div>
+      <div class="stat"><div class="k">Beleihung Nicht-Resident</div><div class="v">60&ndash;70&nbsp;% <small>LTV</small></div></div>
+      <div class="stat"><div class="k">Festzins 2026</div><div class="v">2,8&ndash;3,5&nbsp;%</div></div>
+    </div>
+
+    <div class="notice">
+      <strong>Eiserne Regel:</strong> Kein Kauf ohne aktive HUT-Lizenz, die im Registre de Turisme de Catalunya auf genau diese Wohnung eingetragen ist. Neue Lizenzen gibt es auf Jahre nicht; Verst&ouml;&szlig;e kosten bis 60.000&nbsp;€. Die Lizenz &mdash; nicht die Wohnung &mdash; ist das knappe Gut.
+    </div>
+    <div class="notice gold">
+      <strong>Schweiz-Faktor:</strong> Als Nicht-EU-B&uuml;rger zahlst du 24&nbsp;% auf <em>Brutto</em>-Mieteinnahmen ohne Kostenabzug (EU: 19&nbsp;% netto). Eine spanische SL als Vermietungsgesellschaft zahlt 25&nbsp;% auf den <em>Netto</em>-Gewinn &mdash; der Rendite-Tab rechnet beide Varianten. Die 2025 angek&uuml;ndigte &bdquo;100-%-Steuer&ldquo; f&uuml;r Nicht-EU-K&auml;ufer ist Stand Mitte 2026 <em>nicht</em> in Kraft; z&uuml;giges Handeln sichert den Status quo.
+    </div>
+
+    <div class="cardgrid">
+      <div class="card reco">
+        <div class="eyebrow"><span class="flag">Empfehlung</span><span>1. Meereslinie &middot; Zentrum</span></div>
+        <h3>APIALIA / Immogrupstar Ref.&nbsp;1419</h3>
+        <div class="price">525.000&nbsp;€ <small>+ 35.000&nbsp;€ Stellplatz (optional)</small></div>
+        <div class="specs">82&nbsp;m&sup2; &middot; 2&nbsp;SZ &middot; Bj.&nbsp;2005 &middot; Meerblick-Terrasse &middot; Pool &middot; 50&nbsp;m zur Platja Gran</div>
+        <p style="font-size:13.5px; margin:0;">Das einzige gefundene Objekt, das alle Kriterien vereint: Lizenz, erste Linie, Meerblick-Terrasse und Stellplatz. Gesamtkosten inkl. Steuern ca. <strong class="num">627.000&nbsp;€</strong> &mdash; l&auml;sst Budgetreserve f&uuml;r ein Zweitobjekt.</p>
+        <div class="cardfoot">
+          <button class="btn primary" data-goto="objekte">Alle 12 Objekte ansehen</button>
+          <button class="btn" data-calc-price="560000">In Finanzierungsrechner</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="eyebrow">So benutzt du diese App</div>
+        <h3>Vier Werkzeuge, ein Ziel</h3>
+        <p style="font-size:13.5px; margin:0;"><strong>Objekte</strong> filtert und vergleicht die 12 lizenzierten Angebote. <strong>Finanzierung</strong> rechnet Nebenkosten, Hypothek und ben&ouml;tigtes Einkommen (auch in CHF). <strong>Rendite</strong> vergleicht Direktkauf gegen spanische SL. <strong>Checkliste</strong> und <strong>Fahrplan</strong> f&uuml;hren durch Due Diligence und die ~12 Wochen bis zum Notartermin. H&auml;kchen und Rechner-Eingaben werden lokal gespeichert.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ OBJEKTE ============ -->
+  <section class="tabpane" id="pane-objekte">
+    <h2>Objekte mit aktiver touristischer Lizenz</h2>
+    <p class="lede">Alle Angebote liegen in der Gemeinde Castell-Platja d&rsquo;Aro und wurden mit aktiver HUT-Lizenz beworben. Momentaufnahme der Portale &mdash; Verf&uuml;gbarkeit vor jeder Reise telefonisch verifizieren.</p>
+
+    <div class="filterbar">
+      <div class="grow">
+        <label for="fPrice">Max. Kaufpreis: <strong class="num" id="fPriceVal">650.000&nbsp;€</strong></label>
+        <input type="range" id="fPrice" min="150000" max="650000" step="10000" value="650000">
+      </div>
+      <label><input type="checkbox" id="fLinie"> 1.&nbsp;Meereslinie</label>
+      <label><input type="checkbox" id="fBlick"> Meerblick</label>
+      <label><input type="checkbox" id="fParken"> Stellplatz</label>
+      <label><input type="checkbox" id="fDreiSZ"> 3+&nbsp;Schlafzimmer</label>
+      <label>Sortierung
+        <select id="fSort">
+          <option value="fit">Passung</option>
+          <option value="priceAsc">Preis aufsteigend</option>
+          <option value="priceDesc">Preis absteigend</option>
+          <option value="sqm">Gr&ouml;&szlig;e</option>
+        </select>
+      </label>
+      <span class="count" id="objCount"></span>
+    </div>
+
+    <div class="cardgrid" id="objGrid"></div>
+  </section>
+
+  <!-- ============ FINANZIERUNG ============ -->
+  <section class="tabpane" id="pane-finanzierung">
+    <h2>Finanzierungsrechner (Nicht-Resident, spanische Bank)</h2>
+    <p class="lede">Rechnet die katalanische ITP-Staffel (10&nbsp;% bis 600&nbsp;T€, dar&uuml;ber 11&nbsp;%), Nebenkosten, Annuit&auml;t und das von der Bank verlangte Nettoeinkommen &mdash; umgerechnet in CHF. Airbnb-Einnahmen z&auml;hlen bei der Bonit&auml;tspr&uuml;fung nicht mit.</p>
+    <div class="calc">
+      <div class="panel">
+        <h3>Eingaben</h3>
+        <div class="field">
+          <label for="cPrice">Kaufpreis inkl. Stellplatz (€)</label>
+          <input type="number" id="cPrice" min="50000" max="2000000" step="5000" value="560000">
+        </div>
+        <div class="field">
+          <label for="cLtv">Beleihung (LTV) &mdash; &uuml;blich 60&ndash;70&nbsp;%</label>
+          <div class="inline"><input type="range" id="cLtv" min="0" max="80" step="5" value="70"><span class="rangeval num" id="cLtvVal">70&nbsp;%</span></div>
+        </div>
+        <div class="field">
+          <label for="cZins">Festzins p.&thinsp;a. (%)</label>
+          <input type="number" id="cZins" min="0.5" max="8" step="0.05" value="3.2">
+        </div>
+        <div class="field">
+          <label for="cJahre">Laufzeit (Jahre) &mdash; bei CHF-Einkommen max. 20 (CaixaBank)</label>
+          <input type="number" id="cJahre" min="5" max="30" step="1" value="20">
+        </div>
+        <div class="field">
+          <label for="cFx">Wechselkurs: 1&nbsp;€ = &hellip; CHF</label>
+          <input type="number" id="cFx" min="0.7" max="1.3" step="0.01" value="0.94">
+        </div>
+        <div class="field">
+          <label for="cDti">Max. Verschuldungsquote der Bank (DTI, %)</label>
+          <input type="number" id="cDti" min="20" max="45" step="1" value="35">
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Ergebnis</h3>
+        <table class="results">
+          <tr><td>Kaufpreis</td><td class="num" id="rPrice"></td></tr>
+          <tr><td>ITP-Grunderwerbsteuer (Staffel)</td><td class="num" id="rItp"></td></tr>
+          <tr><td>Notar, Grundbuch, Gestor&iacute;a (~1,5&nbsp;%)</td><td class="num" id="rNotar"></td></tr>
+          <tr class="sep"><td>Anwalt (Pauschale)</td><td class="num" id="rAnwalt"></td></tr>
+          <tr class="total"><td>Gesamtinvestition</td><td class="num" id="rTotal"></td></tr>
+          <tr><td>Darlehen (<span id="rLtvEcho"></span> vom Kaufpreis)</td><td class="num" id="rLoan"></td></tr>
+          <tr class="sep"><td><strong>Eigenkapitalbedarf</strong> (Rest + Nebenkosten)</td><td class="num" id="rEk"></td></tr>
+          <tr><td>Monatsrate (Annuit&auml;t)</td><td class="num" id="rRate"></td></tr>
+          <tr><td>Ben&ouml;tigtes Nettoeinkommen (DTI, ohne weitere Schulden)</td><td class="num" id="rIncome"></td></tr>
+          <tr><td>&hellip; in Schweizer Franken</td><td class="num" id="rIncomeChf"></td></tr>
+          <tr><td>Budget-Check (Limit 1,0&nbsp;Mio&nbsp;€ gesamt)</td><td class="num" id="rBudget"></td></tr>
+        </table>
+        <p class="hint">Dein EUR-Darlehen gilt bei CHF-Einkommen als Fremdw&auml;hrungsdarlehen nach Ley 5/2019 &mdash; ein Schutzrecht (Umwandlungsrecht in CHF, Informationspflichten), kein Hindernis. Banken finanzieren auf den niedrigeren Wert aus Kaufpreis und Bankgutachten (tasaci&oacute;n); Rate konservativ mit +15&nbsp;% Puffer planen. Erste Adressen: CaixaBank&nbsp;HolaBank (CHF ausdr&uuml;cklich akzeptiert), Santander&nbsp;Mundo, BBVA.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RENDITE ============ -->
+  <section class="tabpane" id="pane-rendite">
+    <h2>Rendite: Direktkauf vs. spanische SL</h2>
+    <p class="lede">Als Schweizer (Nicht-EU) zahlst du beim Direktkauf 24&nbsp;% auf die Brutto-Mieteinnahmen ohne Kostenabzug. Eine spanische SL zahlt 25&nbsp;% K&ouml;rperschaftsteuer auf den Netto-Gewinn mit vollem Abzug &mdash; kostet aber Gr&uuml;ndung und laufende Verwaltung.</p>
+    <div class="calc">
+      <div class="panel">
+        <h3>Annahmen</h3>
+        <div class="field">
+          <label for="yNacht">Durchschnittlicher Nachtpreis (€)</label>
+          <input type="number" id="yNacht" min="40" max="600" step="5" value="170">
+        </div>
+        <div class="field">
+          <label for="yAusl">Auslastung der freien Tage (%)</label>
+          <div class="inline"><input type="range" id="yAusl" min="20" max="90" step="5" value="55"><span class="rangeval num" id="yAuslVal">55&nbsp;%</span></div>
+        </div>
+        <div class="field">
+          <label for="yEigen">Eigennutzung (Wochen/Jahr)</label>
+          <input type="number" id="yEigen" min="0" max="26" step="1" value="4">
+        </div>
+        <div class="field">
+          <label for="yMgmt">Verwaltung &amp; Key-Handling (% vom Umsatz)</label>
+          <input type="number" id="yMgmt" min="0" max="40" step="1" value="20">
+        </div>
+        <div class="field">
+          <label for="yFix">Fixkosten p.&thinsp;a. (Comunidad, IBI, Versicherung, Energie) (€)</label>
+          <input type="number" id="yFix" min="0" max="30000" step="250" value="6000">
+        </div>
+        <div class="field">
+          <label for="yInvest">Gesamtinvestition (€) &mdash; f&uuml;r die Renditeberechnung</label>
+          <input type="number" id="yInvest" min="100000" max="2000000" step="5000" value="627000">
+        </div>
+      </div>
+      <div>
+        <div class="panel" style="margin-bottom:14px;">
+          <table class="results">
+            <tr><td>Vermietbare N&auml;chte</td><td class="num" id="yNights"></td></tr>
+            <tr><td>Bruttoumsatz p.&thinsp;a.</td><td class="num" id="yRevenue"></td></tr>
+            <tr><td>Betriebskosten (Verwaltung + Fixkosten)</td><td class="num" id="yCosts"></td></tr>
+          </table>
+        </div>
+        <div class="comparegrid" id="yCompare">
+          <div class="panel" id="yDirektPanel">
+            <div class="winnertag" id="yDirektTag" hidden>G&uuml;nstiger</div>
+            <h3>Direktkauf (privat)</h3>
+            <table class="results">
+              <tr><td>Steuer: 24&nbsp;% auf <strong>Brutto</strong></td><td class="num" id="yTaxD"></td></tr>
+              <tr class="total"><td>Netto nach Steuern &amp; Kosten</td><td class="num" id="yNetD"></td></tr>
+              <tr><td>Nettorendite auf Investition</td><td class="num" id="yYieldD"></td></tr>
+            </table>
+          </div>
+          <div class="panel" id="ySlPanel">
+            <div class="winnertag" id="ySlTag" hidden>G&uuml;nstiger</div>
+            <h3>Spanische SL</h3>
+            <table class="results">
+              <tr><td>Zusatzkosten SL (Buchhaltung, Gestor&iacute;a)</td><td class="num" id="ySlAdmin"></td></tr>
+              <tr><td>Steuer: 25&nbsp;% auf <strong>Netto</strong>-Gewinn</td><td class="num" id="yTaxS"></td></tr>
+              <tr class="total"><td>Netto in der SL (vor Aussch&uuml;ttung)</td><td class="num" id="yNetS"></td></tr>
+              <tr><td>Nettorendite auf Investition</td><td class="num" id="yYieldS"></td></tr>
+            </table>
+          </div>
+        </div>
+        <p class="hint">Vereinfachtes Modell ohne Abschreibung, Zinsabzug (in der SL zus&auml;tzlich abzugsf&auml;hig!) und Dividenden-Quellensteuer bei Aussch&uuml;ttung (DBA CH&ndash;ES, i.&thinsp;d.&thinsp;R. 15&nbsp;%). Eigennutzung muss in der SL marktkonform verg&uuml;tet werden; bei Leerstand f&auml;llt privat zus&auml;tzlich die imputaci&oacute;n de rentas an. Entscheidung nur mit CH&ndash;ES-Steuerberater.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CHECKLISTE ============ -->
+  <section class="tabpane" id="pane-checkliste">
+    <h2>Due-Diligence-Checkliste</h2>
+    <p class="lede">Jeder Haken wird lokal im Browser gespeichert. Reihenfolge entspricht dem Kaufprozess &mdash; die Lizenzpr&uuml;fung kommt vor jedem unterschriebenen Papier.</p>
+    <div class="progresswrap">
+      <div class="progressbar"><div id="clBar" style="width:0%"></div></div>
+      <span class="num" id="clPct" style="font-weight:700;">0&nbsp;%</span>
+    </div>
+    <div id="clGroups"></div>
+  </section>
+
+  <!-- ============ FAHRPLAN ============ -->
+  <section class="tabpane" id="pane-fahrplan">
+    <h2>Fahrplan: ~12 Wochen bis zum Airbnb-Listing</h2>
+    <p class="lede">Phasen &uuml;berlappen bewusst &mdash; Finanzierung und Objektsuche laufen parallel, damit du mit Vorabgenehmigung wie ein Barzahler verhandeln kannst.</p>
+    <div id="phases"></div>
+  </section>
+
+</main>
+
+<footer class="app">
+  Rechercheunterlage, keine Rechts-, Steuer- oder Anlageberatung. Datenstand 6.&nbsp;Juli 2026; Angebots- und Rechtslage vor Vertragsschluss verifizieren (Anwalt: Rechtsstand am Beurkundungstag best&auml;tigen lassen). Quellen und Details: siehe Word-Dokument &bdquo;Ferienwohnung_Platja_dAro_Strategie&ldquo;.
+</footer>
+
+<script>
+'use strict';
+
+/* ---------- Daten ---------- */
+const OBJEKTE = [
+  { id: 1, name: 'APIALIA/Immogrupstar Ref. 1419', zone: '1. Meereslinie · Centre / Platja Gran',
+    price: 525000, parkingExtra: 35000, sqm: 82, sz: 2, bad: 1, reco: true,
+    linie: true, blick: true, terrasse: true, parken: true,
+    note: 'Bj. 2005, Meerblick-Terrasse, Pool vor der Wohnung, 50 m zum Strand. Stellplatz optional +35 T€.',
+    url: 'https://immogrupstar.mobiliagestion.es/es/platja_daro/primera_linea_de_mar/apartamentos/ref-1419' },
+  { id: 2, name: 'Av. Costa Brava 34, Platja Llarga', zone: '1. Meereslinie · Platja Llarga',
+    price: 495000, parkingExtra: 0, sqm: 67, sz: 2, bad: 1,
+    linie: true, blick: true, terrasse: true, parken: false,
+    note: '6. Etage mit Aufzug, sehr große Terrasse frontal zum Meer, direkter Strandzugang. Kein eigener Stellplatz.',
+    url: 'https://www.idealista.com/inmueble/107804610/' },
+  { id: 3, name: 'Carrer Sa Pubiatina', zone: '1. Meereslinie · Centre / Platja Gran',
+    price: 450000, parkingExtra: 0, sqm: 96, sz: 3, bad: 2,
+    linie: true, blick: false, terrasse: true, parken: true,
+    note: 'EG, große Privatterrasse mit direktem Strandzugang, Gemeinschaftsparking, reformiert. Blick seitlich, nicht frontal.',
+    url: 'https://www.pisos.com/comprar/apartamento-centre_platja_gran17250-60096821293_101800/' },
+  { id: 4, name: 'S’Agaró — Blick auf Playa Sant Pol', zone: 'S’Agaró · Sant Pol',
+    price: 630000, parkingExtra: 0, sqm: 108, sz: 3, bad: 2,
+    linie: false, blick: true, terrasse: true, parken: true,
+    note: 'Nobelste Lage der Gemeinde, Garage, kürzlich im Preis reduziert. Höchste Nachtpreise.',
+    url: 'https://www.herttonproperties.com/propiedad/apartamento-centrico-con-licencia-turistica-en-platja-daro/' },
+  { id: 5, name: 'Apartamento „Lleida“, Centre-Platja', zone: '1. Meereslinie · Centre',
+    price: 590000, parkingExtra: 0, sqm: 85, sz: 3, bad: 1, circa: true,
+    linie: true, blick: true, terrasse: true, parken: false,
+    note: 'Panorama-Meerblick, direkter Strandzugang, 3 SZ. Preis aus m²-Angabe abgeleitet — verifizieren.',
+    url: 'https://www.habitaclia.com/apartamentos-platja_d_aro.htm' },
+  { id: 6, name: 'Ático Port d’Aro (Lucas Fox PDA57462)', zone: 'Port d’Aro',
+    price: 555000, parkingExtra: 0, sqm: 106, sz: 3, bad: 2,
+    linie: false, blick: false, terrasse: true, parken: true,
+    note: 'Große private Dachterrasse (Bergblick), eigene Garage, Pool. 5 Min. zum Strand.',
+    url: 'https://www.lucasfox.es/comprar-vivienda/espana/costa-brava/playa-de-aro/piso/pda57462.html' },
+  { id: 7, name: 'Duplex Av. Verona Terol (E&V W-048JTU)', zone: 'Port d’Aro · Marina',
+    price: 375000, parkingExtra: 0, sqm: 92, sz: 2, bad: 1,
+    linie: false, blick: false, terrasse: true, parken: true,
+    note: '20 m² Terrasse, Stellplatz + Abstellraum im Preis, möbliert, Pool, Bj. 2007. Bestes Preis-Leistungs-Verhältnis.',
+    url: 'https://www.engelvoelkers.com/es/en/exposes/6a006cdc-1227-5b3a-9d5e-2bcf8563f5d5' },
+  { id: 8, name: 'Duplex Punta Prima (Costa Brava Fincas)', zone: 'Port d’Aro · Sa Conca',
+    price: null, parkingExtra: 0, sqm: 116, sz: 3, bad: 2,
+    linie: false, blick: true, terrasse: true, parken: false,
+    note: 'Teil-Meerblick, Fußbodenheizung, Pool, nahe Sa-Conca-Strand. Preis auf Anfrage.',
+    url: 'https://www.costabravafincas.com/eng/p/inmo/property/properties/12/apartment-sale-platja-daro-6077.htm' },
+  { id: 9, name: 'Duplex Cavall Bernat (HabitAa SG-01072)', zone: '1. Meereslinie · Cavall Bernat',
+    price: 320000, parkingExtra: 0, sqm: 81, sz: 2, bad: 1,
+    linie: true, blick: true, terrasse: true, parken: true,
+    note: 'Meerblick, Strandzugang über Gemeinschaftsgärten, Außenstellplatz, Concierge ganzjährig, reformiert.',
+    url: 'https://habitaacostabrava.com/es/properties/apartamento-con-licencia-turistica-al-lado-del-mar/' },
+  { id: 10, name: 'Zentrum, kernsaniert 2025 (api.cat 823)', zone: 'Centre',
+    price: 279000, parkingExtra: 0, sqm: 60, sz: 3, bad: 1,
+    linie: false, blick: false, terrasse: true, parken: false,
+    note: 'Komplett renoviert, Südausrichtung, wenige Minuten zum Strand. Öffentliches Parkhaus am Gebäude.',
+    url: 'https://www.api.cat/compra/habitatges/girona/platja-d-aro-la/2687923' },
+  { id: 11, name: '1. Linie mit Strandzugang (Europa 2000 PDAA07)', zone: '1. Meereslinie · Centre',
+    price: 194900, parkingExtra: 0, sqm: 43, sz: 2, bad: 1,
+    linie: true, blick: false, terrasse: false, parken: false,
+    note: 'Direkter Strandzugang, Concierge, Courtesy-Parking. Kein Meerblick — dafür der günstigste 1.-Linie-Einstieg.',
+    url: 'https://www.europa2000sl.es/ficha-inmueble.php?cod_inmueble=1753989' },
+  { id: 12, name: 'Zentrum, 4 Min. zum Strand (Hertton HZHT-25)', zone: 'Centre',
+    price: 175000, parkingExtra: 0, sqm: 45, sz: 1, bad: 1,
+    linie: false, blick: false, terrasse: true, parken: false,
+    note: 'Kompaktes Anlageobjekt mit Terrasse, komplett ausgestattet.',
+    url: 'https://www.herttonproperties.com/propiedad/apartamento-centrico-con-licencia-turistica-en-platja-daro/' },
+];
+
+const CHECKLIST = [
+  { group: 'Lizenz (vor jeder Reservierung)', items: [
+    'HUTG-Nummer vom Verkäufer geben lassen',
+    'Lizenz im Registre de Turisme de Catalunya verifizieren (exakt diese Wohnung / Katasterreferenz)',
+    'Kein offenes Sanktionsverfahren auf der Lizenz (wird mitgeerbt!)',
+    'Nationale Registrierungsnummer (NRA/VUD, Pflicht seit Juli 2025) vorhanden',
+    'Buchungshistorie / Umsätze der letzten 2–3 Jahre anfordern',
+  ]},
+  { group: 'Eigentümergemeinschaft', items: [
+    'Statuten: kein Verbot touristischer Vermietung',
+    'Versammlungsprotokolle (min. 3 Jahre): keine geplante 3/5-Abstimmung gegen Vermietung',
+  ]},
+  { group: 'Objekt', items: [
+    'Nota simple aus dem Grundbuch (Hypotheken, Embargos, Rechte Dritter)',
+    'Cédula de habitabilidad gültig',
+    'Energieausweis (CEE) vorhanden und plausibel',
+  ]},
+  { group: 'Vertrag', items: [
+    'Eigenen unabhängigen Anwalt beauftragt (nicht den des Maklers)',
+    'Reserva nur mit Rücktrittsrecht bei negativem Lizenz-Check',
+    'Contrato de arras mit auflösender Bedingung: wirksame Lizenzübertragung',
+    'Anwalt bestätigt Rechtsstand (Nicht-EU-Regeln) zum Beurkundungstag',
+  ]},
+  { group: 'Finanzierung', items: [
+    'NIE-Nummer beantragt',
+    'Spanisches Bankkonto eröffnet',
+    'Unterlagen-Dossier komplett (Lohnausweise, Steuererklärung, Betreibungsauszug, EK-Herkunft)',
+    'Vorabgenehmigungen von 2–3 Banken (CaixaBank HolaBank, Santander, BBVA) eingeholt',
+  ]},
+  { group: 'Nach dem Kauf', items: [
+    'Lizenzübertragung an die Generalitat binnen 30 Tagen gemeldet',
+    'NRA/VUD-Registrierung aktualisiert',
+    'Verwaltungsagentur beauftragt (Gästemeldung, Tourismusabgabe, Reinigung, 24-h-Nummer)',
+    'Airbnb/Booking-Listing mit Lizenznummern live',
+  ]},
+];
+
+const PHASES = [
+  { when: 'Wo. 1–2', title: 'Struktur & Basis', text: 'Steuerberater CH–ES: Direktkauf vs. SL entscheiden. NIE beantragen (spanisches Konsulat in der Schweiz oder vor Ort). Spanisches Bankkonto eröffnen.' },
+  { when: 'Wo. 2–4', title: 'Finanzierung vorbereiten', text: 'Unterlagen-Dossier erstellen; parallel bei CaixaBank HolaBank, Santander und BBVA anfragen; Vorabgenehmigung (pre-approval) einholen — macht dich in der Verhandlung zum Quasi-Barzahler.' },
+  { when: 'Wo. 3–5', title: 'Objekte sichern', text: 'Top-5 telefonisch verifizieren (Verfügbarkeit, HUTG-Nummern), Besichtigungsreise bündeln. Suchalarme auf Idealista/Habitaclia/Fotocasa („licencia turística“ + Platja d’Aro) und Suchprofil beim APIALIA-Verbund (22 Makler) hinterlegen.' },
+  { when: 'Wo. 5–7', title: 'Due Diligence & Reserva', text: 'Anwalt beauftragen; Lizenz-, Gemeinschafts- und Grundbuchprüfung; Reserva mit Rücktrittsrecht; Preisverhandlung (Argumente: 5-Jahres-Lizenzregime, tasación, Energieklasse).' },
+  { when: 'Wo. 7–9', title: 'Arras & Bewertung', text: 'Contrato de arras mit Lizenz-Bedingung (10 % Anzahlung); Bankgutachten (tasación); finale Kreditzusage (FEIN-Dokument, 10 Tage gesetzliche Bedenkfrist).' },
+  { when: 'Wo. 9–12', title: 'Abschluss & Betrieb', text: 'Notartermin (escritura); Lizenzübertragung binnen 30 Tagen; Verwaltungsagentur beauftragen; Listing mit HUTG- und NRA-Nummer live schalten.' },
+];
+
+/* ---------- Helpers ---------- */
+const $ = (sel) => document.querySelector(sel);
+const eur = (v) => Math.round(v).toLocaleString('de-CH') + ' €';
+const chf = (v) => Math.round(v).toLocaleString('de-CH') + ' CHF';
+const pct1 = (v) => (Math.round(v * 10) / 10).toLocaleString('de-CH') + ' %';
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+};
+
+/* ---------- Tabs ---------- */
+function showTab(name) {
+  document.querySelectorAll('nav.tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
+  document.querySelectorAll('section.tabpane').forEach(s => s.classList.toggle('active', s.id === 'pane-' + name));
+  window.scrollTo({ top: 0 });
+}
+$('#tabs').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-tab]');
+  if (b) showTab(b.dataset.tab);
+});
+document.body.addEventListener('click', (e) => {
+  const g = e.target.closest('[data-goto]');
+  if (g) showTab(g.dataset.goto);
+  const c = e.target.closest('[data-calc-price]');
+  if (c) { $('#cPrice').value = c.dataset.calcPrice; calcFin(); showTab('finanzierung'); }
+});
+
+/* ---------- Objekte ---------- */
+function fitScore(o) { return ['linie', 'blick', 'terrasse', 'parken'].reduce((n, k) => n + (o[k] ? 1 : 0), 0); }
+
+function chipHtml(on, label) { return '<span class="chip' + (on ? '' : ' off') + '">' + label + '</span>'; }
+
+function renderObjekte() {
+  const maxP = Number($('#fPrice').value);
+  $('#fPriceVal').textContent = maxP.toLocaleString('de-CH') + ' €';
+  const needLinie = $('#fLinie').checked, needBlick = $('#fBlick').checked;
+  const needParken = $('#fParken').checked, needSZ = $('#fDreiSZ').checked;
+  const sort = $('#fSort').value;
+
+  let list = OBJEKTE.filter(o =>
+    (o.price === null || o.price + o.parkingExtra <= maxP) &&
+    (!needLinie || o.linie) && (!needBlick || o.blick) &&
+    (!needParken || o.parken) && (!needSZ || o.sz >= 3)
+  );
+  const cmp = {
+    fit: (a, b) => fitScore(b) - fitScore(a) || (a.price || 9e9) - (b.price || 9e9),
+    priceAsc: (a, b) => (a.price || 9e9) - (b.price || 9e9),
+    priceDesc: (a, b) => (b.price || 0) - (a.price || 0),
+    sqm: (a, b) => b.sqm - a.sqm,
+  };
+  list.sort(cmp[sort]);
+
+  $('#objCount').textContent = list.length + ' von ' + OBJEKTE.length + ' Objekten';
+  $('#objGrid').innerHTML = list.map(o => {
+    const score = fitScore(o);
+    const waves = [0, 1, 2, 3].map(i => '<i class="' + (i < score ? 'on' : '') + '"></i>').join('');
+    const priceHtml = o.price === null
+      ? '<div class="price">auf Anfrage</div>'
+      : '<div class="price">' + (o.circa ? 'ca. ' : '') + eur(o.price) +
+        (o.parkingExtra ? ' <small>+ ' + eur(o.parkingExtra) + ' Stellplatz</small>' : '') + '</div>';
+    const calcPrice = o.price === null ? null : o.price + o.parkingExtra;
+    return '<article class="card' + (o.reco ? ' reco' : '') + '">' +
+      '<div class="eyebrow">' + (o.reco ? '<span class="flag">Empfehlung</span>' : '') + '<span>' + o.zone + '</span></div>' +
+      '<h3>' + o.name + '</h3>' + priceHtml +
+      '<div class="specs num">' + o.sqm + ' m² · ' + o.sz + ' SZ · ' + o.bad + ' Bad</div>' +
+      '<div class="chips"><span class="chip lic">HUT-Lizenz aktiv</span>' +
+        chipHtml(o.linie, '1. Linie') + chipHtml(o.blick, 'Meerblick') +
+        chipHtml(o.terrasse, 'Terrasse') + chipHtml(o.parken, 'Stellplatz') + '</div>' +
+      '<div class="fit"><span class="waves">' + waves + '</span> ' + score + '/4 Kriterien</div>' +
+      '<p style="font-size:13px; margin:0; color:var(--muted);">' + o.note + '</p>' +
+      '<div class="cardfoot">' +
+        '<a class="btn" href="' + o.url + '" target="_blank" rel="noopener">Inserat öffnen</a>' +
+        (calcPrice ? '<button class="btn primary" data-calc-price="' + calcPrice + '">Finanzieren</button>' : '') +
+      '</div></article>';
+  }).join('') || '<p class="lede">Kein Objekt erfüllt diese Filterkombination — Kriterien lockern.</p>';
+}
+['fPrice', 'fLinie', 'fBlick', 'fParken', 'fDreiSZ', 'fSort'].forEach(id =>
+  document.getElementById(id).addEventListener('input', renderObjekte));
+
+/* ---------- Finanzierung ---------- */
+function itpCatalunya(p) {
+  let t = 0;
+  t += Math.min(p, 600000) * 0.10;
+  if (p > 600000) t += (Math.min(p, 900000) - 600000) * 0.11;
+  if (p > 900000) t += (Math.min(p, 1500000) - 900000) * 0.12;
+  if (p > 1500000) t += (p - 1500000) * 0.13;
+  return t;
+}
+function annuity(loan, ratePct, years) {
+  if (loan <= 0) return 0;
+  const r = ratePct / 100 / 12, n = years * 12;
+  if (r === 0) return loan / n;
+  return loan * r / (1 - Math.pow(1 + r, -n));
+}
+function calcFin() {
+  const p = Number($('#cPrice').value) || 0;
+  const ltv = Number($('#cLtv').value);
+  const zins = Number($('#cZins').value) || 0;
+  const jahre = Math.max(1, Number($('#cJahre').value) || 20);
+  const fx = Number($('#cFx').value) || 0.94;
+  const dti = Math.max(1, Number($('#cDti').value) || 35);
+
+  $('#cLtvVal').textContent = ltv + ' %';
+  const itp = itpCatalunya(p);
+  const notar = p * 0.015;
+  const anwalt = 3000;
+  const total = p + itp + notar + anwalt;
+  const loan = p * ltv / 100;
+  const ek = total - loan;
+  const rate = annuity(loan, zins, jahre);
+  const income = rate / (dti / 100);
+
+  $('#rPrice').textContent = eur(p);
+  $('#rItp').textContent = eur(itp);
+  $('#rNotar').textContent = eur(notar);
+  $('#rAnwalt').textContent = eur(anwalt);
+  $('#rTotal').textContent = eur(total);
+  $('#rLtvEcho').textContent = ltv + ' %';
+  $('#rLoan').textContent = eur(loan);
+  $('#rEk').textContent = eur(ek);
+  $('#rRate').textContent = eur(rate) + ' / Monat';
+  $('#rIncome').textContent = loan > 0 ? eur(income) + ' / Monat' : '—';
+  $('#rIncomeChf').textContent = loan > 0 ? 'ca. ' + chf(income * fx) + ' / Monat' : '—';
+  $('#rBudget').innerHTML = total <= 1000000
+    ? '<span class="badge ok">im Budget · Reserve ' + eur(1000000 - total) + '</span>'
+    : '<span class="badge crit">über Budget: +' + eur(total - 1000000) + '</span>';
+
+  store.set('pda-fin', { p, ltv, zins, jahre, fx, dti });
+}
+['cPrice', 'cLtv', 'cZins', 'cJahre', 'cFx', 'cDti'].forEach(id =>
+  document.getElementById(id).addEventListener('input', calcFin));
+(function restoreFin() {
+  const s = store.get('pda-fin', null);
+  if (!s) return;
+  $('#cPrice').value = s.p; $('#cLtv').value = s.ltv; $('#cZins').value = s.zins;
+  $('#cJahre').value = s.jahre; $('#cFx').value = s.fx; $('#cDti').value = s.dti;
+})();
+
+/* ---------- Rendite ---------- */
+function calcYield() {
+  const nacht = Number($('#yNacht').value) || 0;
+  const ausl = Number($('#yAusl').value);
+  const eigen = Number($('#yEigen').value) || 0;
+  const mgmtPct = Number($('#yMgmt').value) || 0;
+  const fix = Number($('#yFix').value) || 0;
+  const invest = Number($('#yInvest').value) || 1;
+
+  $('#yAuslVal').textContent = ausl + ' %';
+  const nights = Math.max(0, Math.round((365 - eigen * 7) * ausl / 100));
+  const revenue = nights * nacht;
+  const mgmt = revenue * mgmtPct / 100;
+  const costs = mgmt + fix;
+
+  const taxD = revenue * 0.24;
+  const netD = revenue - costs - taxD;
+
+  const slAdmin = 2500;
+  const profitS = revenue - costs - slAdmin;
+  const taxS = Math.max(0, profitS) * 0.25;
+  const netS = profitS - taxS;
+
+  $('#yNights').textContent = nights + ' Nächte';
+  $('#yRevenue').textContent = eur(revenue);
+  $('#yCosts').textContent = eur(costs);
+  $('#yTaxD').textContent = eur(taxD);
+  $('#yNetD').textContent = eur(netD);
+  $('#yYieldD').textContent = pct1(netD / invest * 100);
+  $('#ySlAdmin').textContent = eur(slAdmin);
+  $('#yTaxS').textContent = eur(taxS);
+  $('#yNetS').textContent = eur(netS);
+  $('#yYieldS').textContent = pct1(netS / invest * 100);
+
+  const slWins = netS > netD;
+  $('#ySlTag').hidden = !slWins;
+  $('#yDirektTag').hidden = slWins;
+  $('#ySlPanel').classList.toggle('winner', slWins);
+  $('#yDirektPanel').classList.toggle('winner', !slWins);
+
+  store.set('pda-yield', { nacht, ausl, eigen, mgmtPct, fix, invest });
+}
+['yNacht', 'yAusl', 'yEigen', 'yMgmt', 'yFix', 'yInvest'].forEach(id =>
+  document.getElementById(id).addEventListener('input', calcYield));
+(function restoreYield() {
+  const s = store.get('pda-yield', null);
+  if (!s) return;
+  $('#yNacht').value = s.nacht; $('#yAusl').value = s.ausl; $('#yEigen').value = s.eigen;
+  $('#yMgmt').value = s.mgmtPct; $('#yFix').value = s.fix; $('#yInvest').value = s.invest;
+})();
+
+/* ---------- Checkliste ---------- */
+function renderChecklist() {
+  const done = store.get('pda-checklist', {});
+  $('#clGroups').innerHTML = CHECKLIST.map((g, gi) => {
+    const items = g.items.map((txt, ii) => {
+      const key = gi + '-' + ii;
+      const checked = done[key] ? ' checked' : '';
+      return '<div class="checkitem"><input type="checkbox" id="cl-' + key + '" data-key="' + key + '"' + checked + '>' +
+             '<label for="cl-' + key + '">' + txt + '</label></div>';
+    }).join('');
+    const gDone = g.items.filter((_, ii) => done[gi + '-' + ii]).length;
+    return '<details class="checkgroup panel" open><summary>' + g.group +
+           ' <span class="gcount">' + gDone + '/' + g.items.length + '</span></summary>' + items + '</details>';
+  }).join('');
+  updateProgress();
+}
+function updateProgress() {
+  const done = store.get('pda-checklist', {});
+  const total = CHECKLIST.reduce((n, g) => n + g.items.length, 0);
+  const n = Object.values(done).filter(Boolean).length;
+  const pct = Math.round(n / total * 100);
+  $('#clBar').style.width = pct + '%';
+  $('#clPct').textContent = pct + ' %';
+}
+$('#clGroups').addEventListener('change', (e) => {
+  const cb = e.target.closest('input[data-key]');
+  if (!cb) return;
+  const done = store.get('pda-checklist', {});
+  done[cb.dataset.key] = cb.checked;
+  store.set('pda-checklist', done);
+  renderChecklist();
+});
+
+/* ---------- Fahrplan ---------- */
+$('#phases').innerHTML = PHASES.map(p =>
+  '<div class="phase"><div class="when">' + p.when + '</div><div><h3>' + p.title + '</h3><p>' + p.text + '</p></div></div>'
+).join('');
+
+/* ---------- Init ---------- */
+renderObjekte();
+calcFin();
+calcYield();
+renderChecklist();
+</script>
+</body></html>
