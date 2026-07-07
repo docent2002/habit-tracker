@@ -17,9 +17,9 @@ Castell-Platja d'Aro (Costa Brava).
   printf '</body></html>' >> index.html
   ```
 
-## Täglicher Analyse-Lauf
+## Zweiwöchentlicher Analyse-Lauf
 
-Eine Claude-Routine aktualisiert die App jeden Morgen:
+Eine Claude-Routine aktualisiert die App am 1. und 15. jedes Monats:
 
 1. Portale nach Inseraten mit „licencia turística" in Platja d'Aro absuchen
 2. `OBJEKTE`-Array in `app.html` pflegen (neue Objekte mit `neu: true`,
