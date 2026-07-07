@@ -305,7 +305,7 @@
       <div class="card">
         <div class="eyebrow">So benutzt du diese App</div>
         <h3>Vier Werkzeuge, ein Ziel</h3>
-        <p style="font-size:13.5px; margin:0;"><strong>Objekte</strong> filtert und vergleicht die 12 lizenzierten Angebote. <strong>Finanzierung</strong> rechnet Nebenkosten, Hypothek und ben&ouml;tigtes Einkommen (auch in CHF). <strong>Rendite</strong> vergleicht Direktkauf gegen spanische SL. <strong>Checkliste</strong> und <strong>Fahrplan</strong> f&uuml;hren durch Due Diligence und die ~12 Wochen bis zum Notartermin. H&auml;kchen und Rechner-Eingaben werden lokal gespeichert.</p>
+        <p style="font-size:13.5px; margin:0;"><strong>Objekte</strong> filtert und vergleicht die 12 lizenzierten Angebote. <strong>Finanzierung</strong> rechnet Nebenkosten, Hypothek und ben&ouml;tigtes Einkommen &mdash; ausgelegt auf minimalen Eigenkapitaleinsatz. <strong>Rendite</strong> vergleicht Direktkauf gegen spanische SL. <strong>Checkliste</strong> und <strong>Fahrplan</strong> f&uuml;hren durch Due Diligence und die ~12 Wochen bis zum Notartermin. H&auml;kchen und Rechner-Eingaben werden lokal gespeichert.</p>
       </div>
     </div>
   </section>
@@ -341,7 +341,7 @@
   <!-- ============ FINANZIERUNG ============ -->
   <section class="tabpane" id="pane-finanzierung">
     <h2>Finanzierungsrechner (Nicht-Resident, spanische Bank)</h2>
-    <p class="lede">Rechnet die katalanische ITP-Staffel (10&nbsp;% bis 600&nbsp;T€, dar&uuml;ber 11&nbsp;%), Nebenkosten, Annuit&auml;t und das von der Bank verlangte Nettoeinkommen &mdash; umgerechnet in CHF. Airbnb-Einnahmen z&auml;hlen bei der Bonit&auml;tspr&uuml;fung nicht mit.</p>
+    <p class="lede">Rechnet die katalanische ITP-Staffel (10&nbsp;% bis 600&nbsp;T€, dar&uuml;ber 11&nbsp;%), Nebenkosten, Annuit&auml;t und das von der Bank verlangte Nettoeinkommen. Ausgelegt auf <strong>minimalen Eigenkapitaleinsatz</strong>: Beleihung hoch, Laufzeit lang. Airbnb-Einnahmen z&auml;hlen bei der Bonit&auml;tspr&uuml;fung nicht mit.</p>
     <div class="calc">
       <div class="panel">
         <h3>Eingaben</h3>
@@ -350,7 +350,7 @@
           <input type="number" id="cPrice" min="50000" max="2000000" step="5000" value="560000">
         </div>
         <div class="field">
-          <label for="cLtv">Beleihung (LTV) &mdash; &uuml;blich 60&ndash;70&nbsp;%</label>
+          <label for="cLtv">Beleihung (LTV) &mdash; Standard 60&ndash;70&nbsp;%, bis 80&nbsp;% nur mit Top-Profil/Makler</label>
           <div class="inline"><input type="range" id="cLtv" min="0" max="80" step="5" value="70"><span class="rangeval num" id="cLtvVal">70&nbsp;%</span></div>
         </div>
         <div class="field">
@@ -358,12 +358,8 @@
           <input type="number" id="cZins" min="0.5" max="8" step="0.05" value="3.2">
         </div>
         <div class="field">
-          <label for="cJahre">Laufzeit (Jahre) &mdash; bei CHF-Einkommen max. 20 (CaixaBank)</label>
-          <input type="number" id="cJahre" min="5" max="30" step="1" value="20">
-        </div>
-        <div class="field">
-          <label for="cFx">Wechselkurs: 1&nbsp;€ = &hellip; CHF</label>
-          <input type="number" id="cFx" min="0.7" max="1.3" step="0.01" value="0.94">
+          <label for="cJahre">Laufzeit (Jahre) &mdash; bis 25 f&uuml;r Nicht-Residenten mit EUR-Einkommen</label>
+          <input type="number" id="cJahre" min="5" max="30" step="1" value="25">
         </div>
         <div class="field">
           <label for="cDti">Max. Verschuldungsquote der Bank (DTI, %)</label>
@@ -382,10 +378,9 @@
           <tr class="sep"><td><strong>Eigenkapitalbedarf</strong> (Rest + Nebenkosten)</td><td class="num" id="rEk"></td></tr>
           <tr><td>Monatsrate (Annuit&auml;t)</td><td class="num" id="rRate"></td></tr>
           <tr><td>Ben&ouml;tigtes Nettoeinkommen (DTI, ohne weitere Schulden)</td><td class="num" id="rIncome"></td></tr>
-          <tr><td>&hellip; in Schweizer Franken</td><td class="num" id="rIncomeChf"></td></tr>
           <tr><td>Budget-Check (Limit 1,0&nbsp;Mio&nbsp;€ gesamt)</td><td class="num" id="rBudget"></td></tr>
         </table>
-        <p class="hint">Dein EUR-Darlehen gilt bei CHF-Einkommen als Fremdw&auml;hrungsdarlehen nach Ley 5/2019 &mdash; ein Schutzrecht (Umwandlungsrecht in CHF, Informationspflichten), kein Hindernis. Banken finanzieren auf den niedrigeren Wert aus Kaufpreis und Bankgutachten (tasaci&oacute;n); Rate konservativ mit +15&nbsp;% Puffer planen. Erste Adressen: CaixaBank&nbsp;HolaBank (CHF ausdr&uuml;cklich akzeptiert), Santander&nbsp;Mundo, BBVA.</p>
+        <p class="hint"><strong>EUR-Einkommen ist dein Vorteil:</strong> keine W&auml;hrungsinkongruenz, also keine Fremdw&auml;hrungs-Restriktionen &mdash; volle Laufzeiten (bis 25&nbsp;J.) und die besten Nicht-Residenten-Konditionen. <strong>Eigenkapital minimieren:</strong> (1)&nbsp;2&ndash;3 Banken parallel + spezialisierter Hypothekenmakler &mdash; 70&nbsp;% sind Standard, 80&nbsp;% gehen nur bei starkem Profil; (2)&nbsp;Banken finanzieren auf den niedrigeren Wert aus Kaufpreis und Gutachten (tasaci&oacute;n) &mdash; unter Gutachtenwert kaufen hilft, dr&uuml;ber schadet; (3)&nbsp;lange Laufzeit senkt die Rate und damit das verlangte Einkommen, nicht aber das Eigenkapital; (4)&nbsp;die Kaufnebenkosten (~12&nbsp;%) finanziert keine spanische Bank &mdash; sie sind das harte Minimum an Eigenmitteln. Erste Adressen: CaixaBank&nbsp;HolaBank, Santander&nbsp;Mundo, BBVA.</p>
       </div>
     </div>
   </section>
@@ -602,7 +597,6 @@ const PHASES = [
 /* ---------- Helpers ---------- */
 const $ = (sel) => document.querySelector(sel);
 const eur = (v) => Math.round(v).toLocaleString('de-CH') + ' €';
-const chf = (v) => Math.round(v).toLocaleString('de-CH') + ' CHF';
 const pct1 = (v) => (Math.round(v * 10) / 10).toLocaleString('de-CH') + ' %';
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
@@ -698,8 +692,7 @@ function calcFin() {
   const p = Number($('#cPrice').value) || 0;
   const ltv = Number($('#cLtv').value);
   const zins = Number($('#cZins').value) || 0;
-  const jahre = Math.max(1, Number($('#cJahre').value) || 20);
-  const fx = Number($('#cFx').value) || 0.94;
+  const jahre = Math.max(1, Number($('#cJahre').value) || 25);
   const dti = Math.max(1, Number($('#cDti').value) || 35);
 
   $('#cLtvVal').textContent = ltv + ' %';
@@ -722,20 +715,19 @@ function calcFin() {
   $('#rEk').textContent = eur(ek);
   $('#rRate').textContent = eur(rate) + ' / Monat';
   $('#rIncome').textContent = loan > 0 ? eur(income) + ' / Monat' : '—';
-  $('#rIncomeChf').textContent = loan > 0 ? 'ca. ' + chf(income * fx) + ' / Monat' : '—';
   $('#rBudget').innerHTML = total <= 1000000
     ? '<span class="badge ok">im Budget · Reserve ' + eur(1000000 - total) + '</span>'
     : '<span class="badge crit">über Budget: +' + eur(total - 1000000) + '</span>';
 
-  store.set('pda-fin', { p, ltv, zins, jahre, fx, dti });
+  store.set('pda-fin', { p, ltv, zins, jahre, dti });
 }
-['cPrice', 'cLtv', 'cZins', 'cJahre', 'cFx', 'cDti'].forEach(id =>
+['cPrice', 'cLtv', 'cZins', 'cJahre', 'cDti'].forEach(id =>
   document.getElementById(id).addEventListener('input', calcFin));
 (function restoreFin() {
   const s = store.get('pda-fin', null);
   if (!s) return;
   $('#cPrice').value = s.p; $('#cLtv').value = s.ltv; $('#cZins').value = s.zins;
-  $('#cJahre').value = s.jahre; $('#cFx').value = s.fx; $('#cDti').value = s.dti;
+  $('#cJahre').value = s.jahre || 25; $('#cDti').value = s.dti;
 })();
 
 /* ---------- Rendite ---------- */
