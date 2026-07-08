@@ -2,7 +2,7 @@ name: Deploy Kaufkompass to GitHub Pages
 
 on:
   push:
-    branches: [claude/vacation-home-purchase-i56bc9]
+    branches: [master]
     paths:
       - 'kaufkompass/**'
       - '.github/workflows/pages.yml'
