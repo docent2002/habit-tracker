@@ -1,0 +1,5 @@
+# Netlify-Konfiguration für den Platja d'Aro Kaufkompass.
+# Kein Build nötig — die App ist statisches HTML im Ordner kaufkompass/.
+[build]
+  publish = "kaufkompass"
+  command = "echo 'static site, no build'"
