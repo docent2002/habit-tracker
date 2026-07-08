@@ -262,6 +262,7 @@
     <button role="tab" data-tab="objekte" aria-selected="false">Objekte</button>
     <button role="tab" data-tab="finanzierung" aria-selected="false">Finanzierung</button>
     <button role="tab" data-tab="rendite" aria-selected="false">Rendite</button>
+    <button role="tab" data-tab="struktur" aria-selected="false">Struktur</button>
     <button role="tab" data-tab="checkliste" aria-selected="false">Checkliste</button>
     <button role="tab" data-tab="fahrplan" aria-selected="false">Fahrplan</button>
   </nav>
@@ -448,6 +449,47 @@
         </div>
         <p class="hint">Vereinfachtes Modell ohne Abschreibung, Zinsabzug (in der SL zus&auml;tzlich abzugsf&auml;hig!) und Dividenden-Quellensteuer bei Aussch&uuml;ttung (DBA CH&ndash;ES, i.&thinsp;d.&thinsp;R. 15&nbsp;%). Eigennutzung muss in der SL marktkonform verg&uuml;tet werden; bei Leerstand f&auml;llt privat zus&auml;tzlich die imputaci&oacute;n de rentas an. Entscheidung nur mit CH&ndash;ES-Steuerberater.</p>
       </div>
+    </div>
+  </section>
+
+  <!-- ============ STRUKTUR ============ -->
+  <section class="tabpane" id="pane-struktur">
+    <h2>Kaufstruktur: drei Wege im Vergleich</h2>
+    <p class="lede">Annahmen f&uuml;r die Beispielzahlen: Objekt 560'000&nbsp;€, 45'000&nbsp;€ Airbnb-Umsatz, ~19'000&nbsp;€ Zinsen, ~10'000&nbsp;€ Abschreibung, ~15'000&nbsp;€ Betriebskosten pro Jahr. Ma&szlig;geblich f&uuml;r die spanische Steuer ist die <em>Ans&auml;ssigkeit des Eigent&uuml;mers</em> (EU/EWR oder nicht) &mdash; nicht Staatsb&uuml;rgerschaft oder W&auml;hrung.</p>
+
+    <div class="cardgrid">
+      <article class="card">
+        <div class="eyebrow"><span>Weg 1</span></div>
+        <h3>Privatperson, in der Schweiz ans&auml;ssig</h3>
+        <div class="price">10'800&nbsp;€ <small>ES-Steuer/Jahr im Beispiel</small></div>
+        <div class="chips"><span class="chip">Einfachster Weg</span><span class="chip">Bester Bankzugang</span><span class="chip off">Kein Kostenabzug</span></div>
+        <p style="font-size:13px; margin:0; color:var(--muted);">Als Nicht-EU/EWR-Ans&auml;ssiger: 24&nbsp;% IRNR auf den <strong>Brutto</strong>-Umsatz &mdash; Zinsen, AfA und Kosten z&auml;hlen nicht. Daf&uuml;r: bester Hypothekenzugang (60&ndash;80&nbsp;%), minimaler Verwaltungsaufwand, in der Schweiz steuerfrei (nur Progressionsvorbehalt/Verm&ouml;genssteuer-Satz). Spanische Verm&ouml;genssteuer bei hohem Fremdkapital: 0&nbsp;€.</p>
+      </article>
+      <article class="card">
+        <div class="eyebrow"><span>Weg 2</span></div>
+        <h3>Firma in der Schweiz (GmbH/AG)</h3>
+        <div class="price">10'800&nbsp;€ <small>ES-Steuer/Jahr im Beispiel</small></div>
+        <div class="chips"><span class="chip off">Kein Kostenabzug</span><span class="chip off">Kaum Bankfinanzierung</span><span class="chip off">Doppelter Aufwand</span></div>
+        <p style="font-size:13px; margin:0; color:var(--muted);">Eine Schweizer Gesellschaft gilt in Spanien ebenfalls als Nicht-EU: <strong>gleiche 24&nbsp;% auf brutto</strong>, kein Abzug &mdash; plus Buchhaltung in zwei L&auml;ndern, j&auml;hrliche Befreiungserkl&auml;rung von der 3-%-Sonderabgabe (Modelo 213) und das gr&ouml;&szlig;te Problem: spanische Banken finanzieren ausl&auml;ndische Zweckgesellschaften kaum (wenn, dann ~50&ndash;60&nbsp;% mit pers&ouml;nlicher B&uuml;rgschaft). Alle Nachteile, kein Vorteil.</p>
+      </article>
+      <article class="card winner">
+        <div class="winnertag">Empfehlung</div>
+        <h3>EU-Gesellschaft &mdash; konkret: spanische SL</h3>
+        <div class="price">~250&nbsp;€ <small>ES-Steuer/Jahr im Beispiel</small></div>
+        <div class="chips"><span class="chip">25&nbsp;% nur auf NETTO</span><span class="chip">Zinsen + AfA abziehbar</span><span class="chip">Gesellschafterdarlehen</span></div>
+        <p style="font-size:13px; margin:0; color:var(--muted);">Die beste &bdquo;EU-Firma&ldquo; ist die spanische SL selbst: voller Abzug von Bankzinsen, <strong>Zinsen auf dein Gesellschafterdarlehen</strong>, 3&nbsp;% Geb&auml;ude-AfA und allen Betriebskosten &rarr; steuerpflichtiger Gewinn bei Vollfinanzierung anfangs nahe null. R&uuml;ckfl&uuml;sse an dich zuerst als steuerfreie Darlehensr&uuml;ckzahlung. Finanzierung mit pers&ouml;nlicher B&uuml;rgschaft 60&ndash;80&nbsp;%. Kosten: ~3'000&nbsp;€ Gr&uuml;ndung, ~2'500&nbsp;€/Jahr Verwaltung. Eine GmbH in einem <em>anderen</em> EU-Land br&auml;chte zwar 19&nbsp;% auf netto, aber Betriebsst&auml;tten-Risiko (dann doch 25&nbsp;%), kaum spanische Finanzierung und doppelte Buchhaltung &mdash; lohnt erst als Holding f&uuml;r ein Portfolio.</p>
+      </article>
+    </div>
+
+    <div class="panel" style="margin-top:16px;">
+      <h3>Null-Eigenkapital-Plan (hohe Raten als Hebel)</h3>
+      <table class="results">
+        <tr><td>1. Spanische Hypothek an die SL, pers&ouml;nliche B&uuml;rgschaft (Ziel 80&nbsp;%, &uuml;ber Makler verhandeln)</td><td class="num">448'000&nbsp;€</td></tr>
+        <tr><td>2. L&uuml;cke (Rest + ~12&nbsp;% Nebenkosten) als <strong>Gesellschafterdarlehen</strong> &mdash; Quelle: Lombardkredit aufs Depot, Aufstockung CH-Hypothek oder (teuer) Privatkredit</td><td class="num">~179'000&nbsp;€</td></tr>
+        <tr class="total"><td>Bargeld-Einsatz</td><td class="num">0&nbsp;€</td></tr>
+        <tr><td>Deine hohe Ratenkapazit&auml;t einsetzen f&uuml;r: DTI-Spielraum bei 80&nbsp;% LTV + schnelle Tilgung der teuren Zweitfinanzierung (z.&thinsp;B. in 5&ndash;7 Jahren)</td><td class="num">&nbsp;</td></tr>
+      </table>
+      <p class="hint">Wichtig: Hohe Raten ersetzen kein Eigenkapital bei der LTV-Grenze &mdash; die Bank deckelt am Objektwert, nicht am Einkommen. Null Bargeld geht nur, wenn die L&uuml;cke gegen bestehendes Verm&ouml;gen (Depot/Immobilie) oder per Blankokredit geliehen wird. Nicht verhandelbar: ~10&nbsp;% ITP auf den Kaufpreis (Bemessung mindestens valor de referencia &mdash; Unterdeklaration ist illegal und wirkungslos), Share-Deals scheitern an Art.&nbsp;314 LMV. Struktur (Darlehensvertrag, Fremdvergleichszins, Modelo 232) zwingend mit CH&ndash;ES-Steuerberater aufsetzen.</p>
     </div>
   </section>
 
