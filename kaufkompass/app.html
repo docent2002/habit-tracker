@@ -250,6 +250,34 @@
     max-width: 1060px; margin: 0 auto; padding: 18px 20px 30px;
     color: var(--muted); font-size: 12px; border-top: 1px solid var(--hair);
   }
+
+  /* ---------- Smartphone-Optimierung (Galaxy S25 u. ä.) ---------- */
+  @media (max-width: 640px) {
+    .masthead { padding: 10px 14px 8px; gap: 2px 10px; }
+    .masthead h1 { font-size: 17px; }
+    .masthead .sub { font-size: 10.5px; }
+    /* Tab-Leiste als Daumen-erreichbare Bottom-Navigation */
+    nav.tabs {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 40;
+      background: var(--surface); border-top: 1px solid var(--hair);
+      padding: 2px 4px calc(2px + env(safe-area-inset-bottom));
+      box-shadow: 0 -1px 4px rgba(0,0,0,.07);
+    }
+    nav.tabs button {
+      flex: 1 0 auto; padding: 11px 9px 9px; font-size: 12.5px;
+      border-bottom: none; border-top: 3px solid transparent;
+    }
+    nav.tabs button[aria-selected="true"] { border-top-color: var(--azure); border-bottom-color: transparent; }
+    main { padding: 16px 14px 96px; }
+    footer.app { padding-bottom: 96px; }
+    /* 16px verhindert Auto-Zoom beim Fokussieren von Eingabefeldern */
+    .field input[type="number"], .filterbar select { font-size: 16px; }
+    .btn { padding: 10px 14px; font-size: 14px; }
+    .checkitem { padding: 11px 4px 11px 8px; }
+    .checkitem input { width: 20px; height: 20px; }
+    .phase { grid-template-columns: 64px 1fr; }
+    .price { font-size: 18px; }
+  }
 </style>
 
 <header class="app">
