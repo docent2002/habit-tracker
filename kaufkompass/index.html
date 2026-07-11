@@ -188,6 +188,22 @@
   }
   .field input[type="range"] { width: 100%; accent-color: var(--azure); }
   .field .rangeval { font-weight: 700; min-width: 52px; text-align: right; }
+  .field select {
+    width: 100%; padding: 6px 9px; border: 1px solid var(--hair); border-radius: 5px;
+    background: var(--ground); color: var(--ink); font-size: 14.5px;
+  }
+  details.amort summary {
+    cursor: pointer; font-weight: 600; color: var(--azure-deep);
+    padding: 8px 0 4px; font-size: 13.5px;
+  }
+  table.amort-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-top: 4px; }
+  table.amort-table th {
+    text-align: right; font-size: 10.5px; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--muted); padding: 4px; border-bottom: 2px solid var(--hair);
+  }
+  table.amort-table th:first-child { text-align: left; }
+  table.amort-table td { padding: 4px; border-bottom: 1px solid var(--hair); text-align: right; font-variant-numeric: tabular-nums; }
+  table.amort-table td:first-child { text-align: left; }
 
   table.results { width: 100%; border-collapse: collapse; font-size: 14px; }
   table.results td { padding: 7px 4px; border-bottom: 1px solid var(--hair); vertical-align: top; }
@@ -409,7 +425,51 @@
           <tr><td>Ben&ouml;tigtes Nettoeinkommen (DTI, ohne weitere Schulden)</td><td class="num" id="rIncome"></td></tr>
           <tr><td>Budget-Check (Limit 1,0&nbsp;Mio&nbsp;€ gesamt)</td><td class="num" id="rBudget"></td></tr>
         </table>
-        <p class="hint"><strong>EUR-Einkommen ist dein Vorteil:</strong> keine W&auml;hrungsinkongruenz, also keine Fremdw&auml;hrungs-Restriktionen &mdash; volle Laufzeiten (bis 25&nbsp;J.) und die besten Nicht-Residenten-Konditionen. <strong>Eigenkapital minimieren:</strong> (1)&nbsp;2&ndash;3 Banken parallel + spezialisierter Hypothekenmakler &mdash; 70&nbsp;% sind Standard, 80&nbsp;% gehen nur bei starkem Profil; (2)&nbsp;Banken finanzieren auf den niedrigeren Wert aus Kaufpreis und Gutachten (tasaci&oacute;n) &mdash; unter Gutachtenwert kaufen hilft, dr&uuml;ber schadet; (3)&nbsp;lange Laufzeit senkt die Rate und damit das verlangte Einkommen, nicht aber das Eigenkapital; (4)&nbsp;die Kaufnebenkosten (~12&nbsp;%) finanziert keine spanische Bank &mdash; sie sind das harte Minimum an Eigenmitteln. Erste Adressen: CaixaBank&nbsp;HolaBank, Santander&nbsp;Mundo, BBVA.</p>
+        <p class="hint" id="finHint"><strong>EUR-Einkommen ist dein Vorteil:</strong> keine W&auml;hrungsinkongruenz, also keine Fremdw&auml;hrungs-Restriktionen &mdash; volle Laufzeiten (bis 25&nbsp;J.) und die besten Nicht-Residenten-Konditionen. <strong>Eigenkapital minimieren:</strong> (1)&nbsp;2&ndash;3 Banken parallel + spezialisierter Hypothekenmakler &mdash; 70&nbsp;% sind Standard, 80&nbsp;% gehen nur bei starkem Profil; (2)&nbsp;Banken finanzieren auf den niedrigeren Wert aus Kaufpreis und Gutachten (tasaci&oacute;n) &mdash; unter Gutachtenwert kaufen hilft, dr&uuml;ber schadet; (3)&nbsp;lange Laufzeit senkt die Rate und damit das verlangte Einkommen, nicht aber das Eigenkapital; (4)&nbsp;die Kaufnebenkosten (~12&nbsp;%) finanziert keine spanische Bank &mdash; sie sind das harte Minimum an Eigenmitteln. Erste Adressen: CaixaBank&nbsp;HolaBank, Santander&nbsp;Mundo, BBVA.</p>
+      </div>
+    </div>
+
+    <h2 style="margin-top:22px;">Hypotheken-Simulator</h2>
+    <p class="lede">Wie der HolaBank-Simulator von CaixaBank: Zinstyp w&auml;hlen, Rate und Gesamtzinsen sehen, Tilgungsplan aufklappen. Kaufpreis, Beleihung und Laufzeit werden aus dem Rechner oben &uuml;bernommen.</p>
+    <div class="calc">
+      <div class="panel">
+        <h3>Konditionen</h3>
+        <div class="field">
+          <label for="mTyp">Zinstyp</label>
+          <select id="mTyp">
+            <option value="fest">Fest (tipo fijo) &mdash; Zinssatz von oben</option>
+            <option value="var">Variabel (Eur&iacute;bor 12M + Marge)</option>
+          </select>
+        </div>
+        <div class="field" data-var hidden>
+          <label for="mEuribor">Eur&iacute;bor 12M (%)</label>
+          <input type="number" id="mEuribor" min="-1" max="8" step="0.05" value="2.2">
+        </div>
+        <div class="field" data-var hidden>
+          <label for="mMarge">Marge der Bank f&uuml;r Nicht-Residenten (%)</label>
+          <input type="number" id="mMarge" min="0" max="4" step="0.05" value="1.8">
+        </div>
+        <p class="hint">Variable Hypotheken werden in Spanien j&auml;hrlich an den Eur&iacute;bor angepasst &mdash; die Simulation rechnet mit konstantem Satz. Angezeigt wird der Nominalzins (TIN); der Effektivzins (TAE) liegt mit Gebühren und Versicherungs-Bonificaciones etwas h&ouml;her.</p>
+      </div>
+      <div class="panel">
+        <h3>Ergebnis</h3>
+        <table class="results">
+          <tr><td>Darlehen</td><td class="num" id="mLoan"></td></tr>
+          <tr><td>Angewandter Zinssatz</td><td class="num" id="mRatePct"></td></tr>
+          <tr><td>Monatsrate</td><td class="num" id="mRate"></td></tr>
+          <tr><td>Zinsen &uuml;ber die Gesamtlaufzeit</td><td class="num" id="mTotInt"></td></tr>
+          <tr class="total"><td>Gesamtr&uuml;ckzahlung</td><td class="num" id="mTotAll"></td></tr>
+          <tr><td>1. Jahr: Zinsen / Tilgung</td><td class="num" id="mYear1"></td></tr>
+        </table>
+        <details class="amort">
+          <summary>Tilgungsplan (j&auml;hrlich) anzeigen</summary>
+          <div style="overflow-x:auto;">
+            <table class="amort-table">
+              <thead><tr><th>Jahr</th><th>Zinsen</th><th>Tilgung</th><th>Restschuld</th></tr></thead>
+              <tbody id="mAmort"></tbody>
+            </table>
+          </div>
+        </details>
       </div>
     </div>
   </section>
@@ -790,9 +850,62 @@ function calcFin() {
     : '<span class="badge crit">über Budget: +' + eur(total - 1000000) + '</span>';
 
   store.set('pda-fin', { p, ltv, zins, jahre, dti });
+  calcMortgage();
 }
 ['cPrice', 'cLtv', 'cZins', 'cJahre', 'cDti'].forEach(id =>
   document.getElementById(id).addEventListener('input', calcFin));
+
+/* ---------- Hypotheken-Simulator (HolaBank-Stil) ---------- */
+function calcMortgage() {
+  const p = Number($('#cPrice').value) || 0;
+  const ltv = Number($('#cLtv').value);
+  const years = Math.max(1, Number($('#cJahre').value) || 25);
+  const typ = $('#mTyp').value;
+  const fest = Number($('#cZins').value) || 0;
+  const eur12 = Number($('#mEuribor').value) || 0;
+  const marge = Number($('#mMarge').value) || 0;
+  const ratePct = typ === 'fest' ? fest : eur12 + marge;
+
+  document.querySelectorAll('[data-var]').forEach(el => el.hidden = typ !== 'var');
+
+  const loan = p * ltv / 100;
+  const m = annuity(loan, ratePct, years);
+  const rm = ratePct / 100 / 12;
+  let bal = loan, totInt = 0;
+  const rows = [];
+  for (let y = 1; y <= years && bal > 0.01; y++) {
+    let yi = 0, yp = 0;
+    for (let k = 0; k < 12 && bal > 0.01; k++) {
+      const i = bal * rm;
+      const pr = Math.min(m - i, bal);
+      yi += i; yp += pr; bal -= pr;
+    }
+    totInt += yi;
+    rows.push({ y, yi, yp, bal: Math.max(0, bal) });
+  }
+
+  $('#mLoan').textContent = eur(loan);
+  $('#mRatePct').textContent = pct1(ratePct) + (typ === 'var' ? ' (Euríbor + Marge)' : ' fest');
+  $('#mRate').textContent = eur(m) + ' / Monat';
+  $('#mTotInt').textContent = eur(totInt);
+  $('#mTotAll').textContent = eur(loan + totInt);
+  $('#mYear1').textContent = rows.length
+    ? eur(rows[0].yi) + ' / ' + eur(rows[0].yp) : '—';
+  $('#mAmort').innerHTML = rows.map(r =>
+    '<tr><td>' + r.y + '</td><td>' + eur(r.yi) + '</td><td>' + eur(r.yp) + '</td><td>' + eur(r.bal) + '</td></tr>'
+  ).join('');
+
+  store.set('pda-mortgage', { typ, eur12, marge });
+}
+['mTyp', 'mEuribor', 'mMarge'].forEach(id =>
+  document.getElementById(id).addEventListener('input', calcMortgage));
+(function restoreMortgage() {
+  const s = store.get('pda-mortgage', null);
+  if (!s) return;
+  $('#mTyp').value = s.typ || 'fest';
+  $('#mEuribor').value = s.eur12 ?? 2.2;
+  $('#mMarge').value = s.marge ?? 1.8;
+})();
 (function restoreFin() {
   const s = store.get('pda-fin', null);
   if (!s) return;
