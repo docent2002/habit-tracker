@@ -56,9 +56,18 @@ If two versions do exist and differ, that is itself a filing risk (wrong version
    file, and is direct evidence that the AoA is a reused precedent rather than a fresh draft.
 
 3. **AoA footer contains `Classification: Restricted`.**
-   FINDING TYPE: FACT. A confidentiality marking belonging to another organisation's document
-   template has been left in the footer of a document intended for filing on a public register.
-   Should be removed before execution (DOC-002).
+   FINDING TYPE: FACT. **CORRECTED 2026-08-28.** This was initially recorded as another
+   organisation's confidentiality marking left in the footer. That inference was **wrong** and is
+   withdrawn. Reviewers R01, R02 (PER-17) and R04 independently established that
+   `Classification: Restricted` is **AFSA's own document marking**, appearing on published AIFC
+   rulebook and guidance PDFs including the Constitutional Statute.
+
+   Its true significance is **provenance evidence**: it shows the AoA was built from an
+   AFSA-sourced document, corroborating that the draft derives from the Schedule 5 Standard
+   Articles. It is **not** a third-party leak and **not** a rejection risk.
+   Recommendation unchanged but downgraded to **LOW**: still remove it before execution, since a
+   regulator's internal classification banner has no place on a document going onto a public
+   register (DOC-002).
 
 4. No tracked changes (`w:ins` / `w:del`), no comments, and no hidden text (`w:vanish`) were found
    in any of the three DOCX files. 31 bookmarks exist in the AoA (benign, navigation artefacts).
